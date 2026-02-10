@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2026-02-09
+
+### Fixed
+
+- Migrated GSI `hash_key`/`range_key` to `key_schema` blocks to eliminate deprecation warnings in AWS provider >= 6.x
+
 ## [1.0.0] - 2026-02-09
 
 ### Added

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2026-02-09
+
+### Improved
+
+- Completed examples with full file structure (`versions.tf`, `providers.tf`, `variables.tf`, `main.tf`, `outputs.tf`, `terraform.tfvars`)
+- Added resource policy and custom timeouts to complete example
+
 ## [1.0.1] - 2026-02-09
 
 ### Fixed

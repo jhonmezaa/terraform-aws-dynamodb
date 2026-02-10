@@ -1,11 +1,10 @@
 ################################################################################
 # Complete DynamoDB Table Example
-# Provisioned table with autoscaling, GSI, LSI, TTL, PITR, Streams, SSE
+# Provisioned table with autoscaling, GSI, LSI, TTL, PITR, Streams, KMS SSE,
+# resource policy, table class, deletion protection
 ################################################################################
 
-provider "aws" {
-  region = "us-east-1"
-}
+data "aws_caller_identity" "current" {}
 
 ################################################################################
 # KMS Key for Encryption
@@ -15,6 +14,10 @@ resource "aws_kms_key" "dynamodb" {
   description             = "KMS key for DynamoDB encryption"
   deletion_window_in_days = 7
   enable_key_rotation     = true
+
+  tags = {
+    Name = "dynamodb-example-kms-key"
+  }
 }
 
 ################################################################################
@@ -24,8 +27,8 @@ resource "aws_kms_key" "dynamodb" {
 module "dynamodb" {
   source = "../../dynamodb"
 
-  account_name      = "prod"
-  project_name      = "example"
+  account_name      = var.account_name
+  project_name      = var.project_name
   table_name_suffix = "orders"
 
   # Provisioned billing with autoscaling
@@ -35,7 +38,7 @@ module "dynamodb" {
   hash_key       = "order_id"
   range_key      = "created_at"
 
-  # Attributes
+  # Attributes (must include all keys used in table, GSI, and LSI)
   attributes = [
     { name = "order_id", type = "S" },
     { name = "created_at", type = "N" },
@@ -43,7 +46,7 @@ module "dynamodb" {
     { name = "status", type = "S" },
   ]
 
-  # GSI
+  # Global Secondary Indexes
   global_secondary_indexes = [
     {
       name            = "UserIndex"
@@ -62,7 +65,7 @@ module "dynamodb" {
     }
   ]
 
-  # LSI
+  # Local Secondary Index
   local_secondary_indexes = [
     {
       name            = "StatusLocalIndex"
@@ -75,36 +78,61 @@ module "dynamodb" {
   ttl_enabled        = true
   ttl_attribute_name = "expires_at"
 
-  # PITR
+  # Point-in-Time Recovery
   point_in_time_recovery_enabled = true
 
-  # Streams
+  # DynamoDB Streams
   stream_enabled   = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
 
-  # Encryption
+  # KMS Encryption
   server_side_encryption_enabled     = true
   server_side_encryption_kms_key_arn = aws_kms_key.dynamodb.arn
 
   # Table class
   table_class = "STANDARD"
 
-  # Deletion protection
+  # Deletion protection (disabled for example purposes)
   deletion_protection_enabled = false
+
+  # Resource-based policy (uses __DYNAMODB_TABLE_ARN__ template)
+  resource_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowAccountAccess"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        }
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:Query",
+        ]
+        Resource = "__DYNAMODB_TABLE_ARN__"
+      }
+    ]
+  })
 
   # Autoscaling
   autoscaling_enabled = true
 
   autoscaling_read = {
-    max_capacity = 100
-    target_value = 70
+    max_capacity       = 100
+    target_value       = 70
+    scale_in_cooldown  = 60
+    scale_out_cooldown = 30
   }
 
   autoscaling_write = {
-    max_capacity = 100
-    target_value = 70
+    max_capacity       = 100
+    target_value       = 70
+    scale_in_cooldown  = 60
+    scale_out_cooldown = 30
   }
 
+  # Per-index autoscaling
   autoscaling_indexes = {
     UserIndex = {
       read_max_capacity  = 50
@@ -116,28 +144,21 @@ module "dynamodb" {
     }
   }
 
+  # Custom timeouts
+  timeouts = {
+    create = "15m"
+    update = "60m"
+    delete = "15m"
+  }
+
+  # Tags
   tags_common = {
-    Environment = "prod"
+    Environment = var.environment
     ManagedBy   = "Terraform"
   }
 
   tags = {
     Service = "orders"
+    Tier    = "backend"
   }
-}
-
-################################################################################
-# Outputs
-################################################################################
-
-output "table_name" {
-  value = module.dynamodb.dynamodb_table_name
-}
-
-output "table_arn" {
-  value = module.dynamodb.dynamodb_table_arn
-}
-
-output "table_stream_arn" {
-  value = module.dynamodb.dynamodb_table_stream_arn
 }

@@ -45,15 +45,18 @@ locals {
     "unknown"
   )
 
+  # Name prefix: includes region prefix with trailing dash, or empty string
+  name_prefix = var.use_region_prefix ? "${local.region_prefix}-" : ""
+
   ############################################################################
   # Table Naming
   ############################################################################
 
   # If var.name is provided, use it directly.
-  # Otherwise, generate: {region_prefix}-dynamodb-{account_name}-{project_name}[-{table_name_suffix}]
+  # Otherwise, generate: {name_prefix}dynamodb-{account_name}-{project_name}[-{table_name_suffix}]
   generated_name = var.table_name_suffix != null ? (
-    "${local.region_prefix}-dynamodb-${var.account_name}-${var.project_name}-${var.table_name_suffix}"
-  ) : "${local.region_prefix}-dynamodb-${var.account_name}-${var.project_name}"
+    "${local.name_prefix}dynamodb-${var.account_name}-${var.project_name}-${var.table_name_suffix}"
+  ) : "${local.name_prefix}dynamodb-${var.account_name}-${var.project_name}"
 
   table_name = var.name != null ? var.name : local.generated_name
 

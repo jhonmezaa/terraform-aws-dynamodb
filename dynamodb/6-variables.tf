@@ -18,6 +18,12 @@ variable "region_prefix" {
   default     = null
 }
 
+variable "use_region_prefix" {
+  description = "Whether to include the region prefix in resource names. When false, names omit the region prefix."
+  type        = bool
+  default     = true
+}
+
 variable "table_name_suffix" {
   description = "Optional suffix appended to the generated table name. Used when deploying multiple tables."
   type        = string

@@ -110,10 +110,10 @@ Override with `name` variable to use a custom name.
 
 ## Requirements
 
-| Name | Version |
-|------|---------|
+| Name      | Version  |
+| --------- | -------- |
 | terraform | >= 1.5.7 |
-| aws | >= 5.0 |
+| aws       | >= 5.0   |
 
 ## License
 

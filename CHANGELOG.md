@@ -3,14 +3,14 @@
 ## [v1.0.4] - 2026-02-27
 
 ### Changed
-- Standardize Terraform `required_version` to `~> 1.0` across module and examples
 
+- Standardize Terraform `required_version` to `~> 1.0` across module and examples
 
 ## [v1.0.3] - 2026-02-27
 
 ### Changed
-- Update AWS provider constraint to `~> 6.0` across module and examples
 
+- Update AWS provider constraint to `~> 6.0` across module and examples
 
 All notable changes to this project will be documented in this file.
 

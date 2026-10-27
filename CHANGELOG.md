@@ -1,5 +1,6 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
 
 ## [v1.1.4] - 2026-10-27
 
@@ -34,22 +35,20 @@
 
 - Update AWS provider constraint to `~> 6.0` across module and examples
 
-All notable changes to this project will be documented in this file.
-
-## [1.0.2] - 2026-02-09
+## [v1.0.2] - 2026-02-09
 
 ### Improved
 
 - Completed examples with full file structure (`versions.tf`, `providers.tf`, `variables.tf`, `main.tf`, `outputs.tf`, `terraform.tfvars`)
 - Added resource policy and custom timeouts to complete example
 
-## [1.0.1] - 2026-02-09
+## [v1.0.1] - 2026-02-09
 
 ### Fixed
 
 - Migrated GSI `hash_key`/`range_key` to `key_schema` blocks to eliminate deprecation warnings in AWS provider >= 6.x
 
-## [1.0.0] - 2026-02-09
+## [v1.0.0] - 2026-02-09
 
 ### Added
 

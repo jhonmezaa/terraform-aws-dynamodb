@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.1.5] - 2026-10-27
+
+### Changed
+
+- Normalize CHANGELOG format: preamble moved to the top, all headings use `## [vX.Y.Z] - YYYY-MM-DD`, entries sorted by version (newest first)
+- Add missing CHANGELOG entries for v1.1.0 and v1.1.1, reconstructed from git history
+
 ## [v1.1.4] - 2026-10-27
 
 ### Fixed

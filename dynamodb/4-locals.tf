@@ -41,7 +41,7 @@ locals {
 
   region_prefix = var.region_prefix != null ? var.region_prefix : lookup(
     local.region_prefix_map,
-    data.aws_region.current.id,
+    data.aws_region.current.region,
     "unknown"
   )
 

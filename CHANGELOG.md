@@ -23,6 +23,18 @@ All notable changes to this project will be documented in this file.
 
 - Update README documentation and CHANGELOG formatting
 
+## [v1.1.1] - 2026-02-28
+
+### Changed
+
+- Update README documentation and CHANGELOG formatting
+
+## [v1.1.0] - 2026-02-28
+
+### Added
+
+- `use_region_prefix` variable to toggle the region prefix in table names (wires up the previously declared but unused variable via a new `name_prefix` local)
+
 ## [v1.0.4] - 2026-02-27
 
 ### Changed

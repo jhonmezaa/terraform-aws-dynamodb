@@ -112,8 +112,8 @@ Override with `name` variable to use a custom name.
 
 | Name      | Version  |
 | --------- | -------- |
-| terraform | >= 1.5.7 |
-| aws       | >= 5.0   |
+| terraform | >= 1.3   |
+| aws       | >= 6.0   |
 
 ## License
 

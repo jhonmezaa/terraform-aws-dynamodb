@@ -139,7 +139,9 @@ module "dynamodb" {
       write_max_capacity = 50
     }
     StatusIndex = {
+      read_min_capacity  = 3
       read_max_capacity  = 30
+      write_min_capacity = 3
       write_max_capacity = 30
     }
   }
@@ -154,7 +156,6 @@ module "dynamodb" {
   # Tags
   tags_common = {
     Environment = var.environment
-    ManagedBy   = "Terraform"
   }
 
   tags = {

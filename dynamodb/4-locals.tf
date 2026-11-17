@@ -58,7 +58,7 @@ locals {
     "${local.name_prefix}dynamodb-${var.account_name}-${var.project_name}-${var.table_name_suffix}"
   ) : "${local.name_prefix}dynamodb-${var.account_name}-${var.project_name}"
 
-  table_name = var.name != null ? var.name : local.generated_name
+  table_name = coalesce(var.name, local.generated_name)
 
   ############################################################################
   # Table ARN (resolved from whichever variant was created)
@@ -77,9 +77,10 @@ locals {
 
   tags = merge(
     var.tags_common,
+    var.tags,
     {
-      Name = local.table_name
-    },
-    var.tags
+      Name      = local.table_name
+      ManagedBy = "Terraform"
+    }
   )
 }

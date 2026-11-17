@@ -5,11 +5,21 @@
 variable "account_name" {
   description = "Account name for resource naming convention"
   type        = string
+
+  validation {
+    condition     = length(var.account_name) >= 1 && length(var.account_name) <= 32 && can(regex("^[a-z0-9-]+$", var.account_name))
+    error_message = "account_name debe tener entre 1 y 32 caracteres y solo puede contener letras minúsculas, números y guiones."
+  }
 }
 
 variable "project_name" {
   description = "Project name for resource naming convention"
   type        = string
+
+  validation {
+    condition     = length(var.project_name) >= 1 && length(var.project_name) <= 32 && can(regex("^[a-z0-9-]+$", var.project_name))
+    error_message = "project_name debe tener entre 1 y 32 caracteres y solo puede contener letras minúsculas, números y guiones."
+  }
 }
 
 variable "region_prefix" {
@@ -203,7 +213,7 @@ variable "replica_regions" {
 ################################################################################
 
 variable "import_table" {
-  description = "Configurations for importing S3 data into a new table. Keys: input_format (required), s3_bucket_source (required: bucket, bucket_owner, key_prefix), input_compression_type, input_format_options."
+  description = "Configurations for importing S3 data into a new table. Keys: input_format (required), bucket (required) or s3_bucket_source = { bucket, bucket_owner, key_prefix }, bucket_owner, key_prefix, input_compression_type, input_format_options. Both the flat (upstream-compatible) and the nested s3_bucket_source forms are accepted."
   type        = any
   default     = {}
 }
@@ -269,7 +279,7 @@ variable "restore_to_latest_time" {
 ################################################################################
 
 variable "region" {
-  description = "Region where this DynamoDB table resource will be managed. Defaults to provider region."
+  description = "Region where the DynamoDB table, its resource policy and its autoscaling resources are managed. Defaults to the provider region. The region prefix in the generated name still comes from the provider region."
   type        = string
   default     = null
 }
@@ -327,7 +337,7 @@ variable "autoscaling_write" {
 }
 
 variable "autoscaling_indexes" {
-  description = "A map of index autoscaling configurations. Keys are GSI names. Each value must have read_max_capacity and write_max_capacity. Optional: scale_in_cooldown, scale_out_cooldown, target_value."
+  description = "A map of index autoscaling configurations. Keys are GSI names. Each value must have read_max_capacity and write_max_capacity. Optional: read_min_capacity and write_min_capacity (default to read_capacity / write_capacity), scale_in_cooldown, scale_out_cooldown, target_value."
   type        = map(map(string))
   default     = {}
 }

@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.2.0] - 2026-11-17
+
+### Added
+
+- `autoscaling_indexes` accepts optional `read_min_capacity` / `write_min_capacity` per index (defaults to `read_capacity` / `write_capacity`, as before)
+- `import_table` accepts the flat, upstream-compatible form (`bucket`, `bucket_owner`, `key_prefix` at the top level) in addition to the nested `s3_bucket_source` object
+- `replica_regions[*].deletion_protection_enabled` is now applied in the `autoscaled` and `autoscaled_gsi_ignore` variants too (it was only applied in `this`)
+- `account_name` and `project_name` validation (1-32 characters, `^[a-z0-9-]+$`)
+- README: inputs, outputs, resources, examples and a versioned `source`
+
+### Changed
+
+- AWS provider minimum raised from `>= 6.0` to `>= 6.30` (examples: `~> 6.30`). The GSI `key_schema` blocks used since v1.0.1 do not validate with earlier provider releases
+- Tags now follow `merge(tags_common, tags, { Name, ManagedBy = "Terraform" })`; `tags` can no longer override `Name`
+- Removed the unused `aws_caller_identity` data source
+
+### Fixed
+
+- Autoscaling targets/policies and the resource policy now use `var.region`, so they are created in the same region as the table when `region` is set
+
+### Upgrade notes
+
+- Existing tables gain a `ManagedBy = "Terraform"` tag: in-place tag update, no recreation
+- `account_name` / `project_name` values with uppercase letters, underscores or other characters now fail validation. To comply without renaming (and recreating) the table, switch them to valid values and set `name` to the current table name
+- Requires AWS provider >= 6.30
+
 ## [v1.1.5] - 2026-10-27
 
 ### Changed

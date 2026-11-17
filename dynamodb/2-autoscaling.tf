@@ -20,6 +20,7 @@ resource "aws_appautoscaling_target" "table_read" {
   resource_id        = "table/${try(aws_dynamodb_table.autoscaled[0].name, aws_dynamodb_table.autoscaled_gsi_ignore[0].name)}"
   scalable_dimension = "dynamodb:table:ReadCapacityUnits"
   service_namespace  = "dynamodb"
+  region             = var.region
 }
 
 resource "aws_appautoscaling_policy" "table_read_policy" {
@@ -30,6 +31,7 @@ resource "aws_appautoscaling_policy" "table_read_policy" {
   resource_id        = aws_appautoscaling_target.table_read[0].resource_id
   scalable_dimension = aws_appautoscaling_target.table_read[0].scalable_dimension
   service_namespace  = aws_appautoscaling_target.table_read[0].service_namespace
+  region             = var.region
 
   target_tracking_scaling_policy_configuration {
     predefined_metric_specification {
@@ -54,6 +56,7 @@ resource "aws_appautoscaling_target" "table_write" {
   resource_id        = "table/${try(aws_dynamodb_table.autoscaled[0].name, aws_dynamodb_table.autoscaled_gsi_ignore[0].name)}"
   scalable_dimension = "dynamodb:table:WriteCapacityUnits"
   service_namespace  = "dynamodb"
+  region             = var.region
 }
 
 resource "aws_appautoscaling_policy" "table_write_policy" {
@@ -64,6 +67,7 @@ resource "aws_appautoscaling_policy" "table_write_policy" {
   resource_id        = aws_appautoscaling_target.table_write[0].resource_id
   scalable_dimension = aws_appautoscaling_target.table_write[0].scalable_dimension
   service_namespace  = aws_appautoscaling_target.table_write[0].service_namespace
+  region             = var.region
 
   target_tracking_scaling_policy_configuration {
     predefined_metric_specification {
@@ -83,11 +87,12 @@ resource "aws_appautoscaling_policy" "table_write_policy" {
 resource "aws_appautoscaling_target" "index_read" {
   for_each = var.create_table && var.autoscaling_enabled ? var.autoscaling_indexes : {}
 
-  min_capacity       = var.read_capacity
+  min_capacity       = lookup(each.value, "read_min_capacity", var.read_capacity)
   max_capacity       = each.value["read_max_capacity"]
   resource_id        = "table/${try(aws_dynamodb_table.autoscaled[0].name, aws_dynamodb_table.autoscaled_gsi_ignore[0].name)}/index/${each.key}"
   scalable_dimension = "dynamodb:index:ReadCapacityUnits"
   service_namespace  = "dynamodb"
+  region             = var.region
 }
 
 resource "aws_appautoscaling_policy" "index_read_policy" {
@@ -98,6 +103,7 @@ resource "aws_appautoscaling_policy" "index_read_policy" {
   resource_id        = aws_appautoscaling_target.index_read[each.key].resource_id
   scalable_dimension = aws_appautoscaling_target.index_read[each.key].scalable_dimension
   service_namespace  = aws_appautoscaling_target.index_read[each.key].service_namespace
+  region             = var.region
 
   target_tracking_scaling_policy_configuration {
     predefined_metric_specification {
@@ -117,11 +123,12 @@ resource "aws_appautoscaling_policy" "index_read_policy" {
 resource "aws_appautoscaling_target" "index_write" {
   for_each = var.create_table && var.autoscaling_enabled ? var.autoscaling_indexes : {}
 
-  min_capacity       = var.write_capacity
+  min_capacity       = lookup(each.value, "write_min_capacity", var.write_capacity)
   max_capacity       = each.value["write_max_capacity"]
   resource_id        = "table/${try(aws_dynamodb_table.autoscaled[0].name, aws_dynamodb_table.autoscaled_gsi_ignore[0].name)}/index/${each.key}"
   scalable_dimension = "dynamodb:index:WriteCapacityUnits"
   service_namespace  = "dynamodb"
+  region             = var.region
 }
 
 resource "aws_appautoscaling_policy" "index_write_policy" {
@@ -132,6 +139,7 @@ resource "aws_appautoscaling_policy" "index_write_policy" {
   resource_id        = aws_appautoscaling_target.index_write[each.key].resource_id
   scalable_dimension = aws_appautoscaling_target.index_write[each.key].scalable_dimension
   service_namespace  = aws_appautoscaling_target.index_write[each.key].service_namespace
+  region             = var.region
 
   target_tracking_scaling_policy_configuration {
     predefined_metric_specification {

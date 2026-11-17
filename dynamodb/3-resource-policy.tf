@@ -8,6 +8,7 @@
 resource "aws_dynamodb_resource_policy" "this" {
   count = var.create_table && var.resource_policy != null ? 1 : 0
 
+  region       = var.region
   resource_arn = local.table_arn
   policy       = replace(var.resource_policy, "__DYNAMODB_TABLE_ARN__", local.table_arn)
 }

@@ -24,6 +24,5 @@ module "dynamodb" {
 
   tags_common = {
     Environment = var.environment
-    ManagedBy   = "Terraform"
   }
 }

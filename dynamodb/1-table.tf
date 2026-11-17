@@ -151,9 +151,9 @@ resource "aws_dynamodb_table" "this" {
       }
 
       s3_bucket_source {
-        bucket       = import_table.value.s3_bucket_source.bucket
-        bucket_owner = lookup(import_table.value.s3_bucket_source, "bucket_owner", null)
-        key_prefix   = lookup(import_table.value.s3_bucket_source, "key_prefix", null)
+        bucket       = try(import_table.value.s3_bucket_source.bucket, import_table.value.bucket)
+        bucket_owner = try(import_table.value.s3_bucket_source.bucket_owner, import_table.value.bucket_owner, null)
+        key_prefix   = try(import_table.value.s3_bucket_source.key_prefix, import_table.value.key_prefix, null)
       }
     }
   }
@@ -294,11 +294,12 @@ resource "aws_dynamodb_table" "autoscaled" {
     for_each = var.replica_regions
 
     content {
-      region_name            = replica.value.region_name
-      kms_key_arn            = lookup(replica.value, "kms_key_arn", null)
-      propagate_tags         = lookup(replica.value, "propagate_tags", null)
-      point_in_time_recovery = lookup(replica.value, "point_in_time_recovery", null)
-      consistency_mode       = lookup(replica.value, "consistency_mode", null)
+      region_name                 = replica.value.region_name
+      kms_key_arn                 = lookup(replica.value, "kms_key_arn", null)
+      propagate_tags              = lookup(replica.value, "propagate_tags", null)
+      point_in_time_recovery      = lookup(replica.value, "point_in_time_recovery", null)
+      consistency_mode            = lookup(replica.value, "consistency_mode", null)
+      deletion_protection_enabled = lookup(replica.value, "deletion_protection_enabled", null)
     }
   }
 
@@ -330,9 +331,9 @@ resource "aws_dynamodb_table" "autoscaled" {
       }
 
       s3_bucket_source {
-        bucket       = import_table.value.s3_bucket_source.bucket
-        bucket_owner = lookup(import_table.value.s3_bucket_source, "bucket_owner", null)
-        key_prefix   = lookup(import_table.value.s3_bucket_source, "key_prefix", null)
+        bucket       = try(import_table.value.s3_bucket_source.bucket, import_table.value.bucket)
+        bucket_owner = try(import_table.value.s3_bucket_source.bucket_owner, import_table.value.bucket_owner, null)
+        key_prefix   = try(import_table.value.s3_bucket_source.key_prefix, import_table.value.key_prefix, null)
       }
     }
   }
@@ -451,11 +452,12 @@ resource "aws_dynamodb_table" "autoscaled_gsi_ignore" {
     for_each = var.replica_regions
 
     content {
-      region_name            = replica.value.region_name
-      kms_key_arn            = lookup(replica.value, "kms_key_arn", null)
-      propagate_tags         = lookup(replica.value, "propagate_tags", null)
-      point_in_time_recovery = lookup(replica.value, "point_in_time_recovery", null)
-      consistency_mode       = lookup(replica.value, "consistency_mode", null)
+      region_name                 = replica.value.region_name
+      kms_key_arn                 = lookup(replica.value, "kms_key_arn", null)
+      propagate_tags              = lookup(replica.value, "propagate_tags", null)
+      point_in_time_recovery      = lookup(replica.value, "point_in_time_recovery", null)
+      consistency_mode            = lookup(replica.value, "consistency_mode", null)
+      deletion_protection_enabled = lookup(replica.value, "deletion_protection_enabled", null)
     }
   }
 
